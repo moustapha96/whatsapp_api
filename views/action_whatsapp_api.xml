@@ -1,0 +1,5 @@
+<record id="action_whatsapp_api" model="ir.actions.act_window">
+    <field name="name">WhatsApp API</field>
+    <field name="res_model">whatsapp.api</field>
+    <field name="view_mode">tree,form</field>
+</record>

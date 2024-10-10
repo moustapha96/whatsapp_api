@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_whatsapp_api_form" model="ir.ui.view">
+            <field name="name">whatsapp.api.form</field>
+            <field name="model">whatsapp.api</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="phone_number_id" />
+                            <field name="access_token" />
+                            <field name="base_url" />
+                            <field name="is_active" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_whatsapp_api_tree" model="ir.ui.view">
+            <field name="name">whatsapp.api.tree</field>
+            <field name="model">whatsapp.api</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="phone_number_id" />
+                    <field name="is_active" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_whatsapp_message_form" model="ir.ui.view">
+            <field name="name">whatsapp.message.form</field>
+            <field name="model">whatsapp.message</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_send_message" string="Send Message" type="object"
+                            class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}" />
+                        <field name="state" widget="statusbar" />
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="recipient_number" />
+                            <field name="message_type" />
+                            <field name="message_content" />
+                            <field name="attachment" widget="binary"
+                                attrs="{'invisible': [('message_type', 'not in', ['image', 'document'])]}" />
+                            <field name="attachment_name"
+                                attrs="{'invisible': [('message_type', '!=', 'document')]}" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_whatsapp_message_tree" model="ir.ui.view">
+            <field name="name">whatsapp.message.tree</field>
+            <field name="model">whatsapp.message</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="recipient_number" />
+                    <field name="message_type" />
+                    <field name="state" />
+                    <field name="create_date" />
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_whatsapp_template_form" model="ir.ui.view">
+            <field name="name">whatsapp.template.form</field>
+            <field name="model">whatsapp.template</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="name" />
+                            <field name="template_name" />
+                            <field name="language_code" />
+                            <field name="content" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_whatsapp_template_tree" model="ir.ui.view">
+            <field name="name">whatsapp.template.tree</field>
+            <field name="model">whatsapp.template</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name" />
+                    <field name="template_name" />
+                    <field name="language_code" />
+                </tree>
+            </field>
+        </record>
+
+        <!-- Action Windows -->
+        <record id="action_whatsapp_api" model="ir.actions.act_window">
+            <field name="name">WhatsApp API</field>
+            <field name="res_model">whatsapp.api</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record id="action_whatsapp_message" model="ir.actions.act_window">
+            <field name="name">WhatsApp Messages</field>
+            <field name="res_model">whatsapp.message</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+        <record id="action_whatsapp_template" model="ir.actions.act_window">
+            <field name="name">WhatsApp Templates</field>
+            <field name="res_model">whatsapp.template</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- Menu Items -->
+        <menuitem id="menu_whatsapp_root" name="WhatsApp Integration" />
+        <menuitem id="menu_whatsapp_api" name="WhatsApp API" parent="menu_whatsapp_root"
+            action="action_whatsapp_api" />
+        <menuitem id="menu_whatsapp_message" name="Messages" parent="menu_whatsapp_root"
+            action="action_whatsapp_message" />
+        <menuitem id="menu_whatsapp_template" name="Templates" parent="menu_whatsapp_root"
+            action="action_whatsapp_template" sequence="15" />
+    </data>
+</odoo>

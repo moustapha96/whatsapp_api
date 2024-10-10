@@ -1,0 +1,44 @@
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_whatsapp_root" name="WhatsApp" sequence="50"
+            web_icon="whatsapp_integration,static/description/icon.png" />
+
+        <menuitem id="menu_whatsapp_config" name="Configuration" parent="menu_whatsapp_root"
+            sequence="100" />
+        <menuitem id="menu_whatsapp_api" name="WhatsApp API" parent="menu_whatsapp_config"
+            action="action_whatsapp_api" />
+
+        <menuitem id="menu_whatsapp_communication" name="Communication" parent="menu_whatsapp_root"
+            sequence="10" />
+        <menuitem id="menu_satisfaction_survey" name="Satisfaction Surveys"
+            parent="menu_whatsapp_communication" action="action_satisfaction_survey" />
+        <menuitem id="menu_restaurant_order" name="Restaurant Orders"
+            parent="menu_whatsapp_communication" action="action_restaurant_order" />
+        <menuitem id="menu_appointment_booking" name="Appointment Bookings"
+            parent="menu_whatsapp_communication" action="action_appointment_booking" />
+    </data>
+</odoo> -->
+
+
+<odoo>
+    <data>
+        <!-- Définition de l'action -->
+        <record id="action_whatsapp_api" model="ir.actions.act_window">
+            <field name="name">WhatsApp API</field>
+            <field name="res_model">whatsapp.api</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+        <!-- Définition des menus -->
+        <menuitem id="menu_whatsapp_root" name="WhatsApp" sequence="50"
+            web_icon="whatsapp_integration,static/description/icon.png" />
+
+        <menuitem id="menu_whatsapp_config" name="Configuration" parent="menu_whatsapp_root"
+            sequence="100" />
+
+        <menuitem id="menu_whatsapp_api" name="WhatsApp API" parent="menu_whatsapp_config"
+            action="action_whatsapp_api" />
+    </data>
+</odoo>
