@@ -1,19 +1,19 @@
 from odoo import models, fields, api
 import requests
+import json
 import logging
 
 _logger = logging.getLogger(__name__)
 
 class WhatsAppAPI(models.Model):
     _name = 'whatsapp.api'
-    _description = 'WhatsApp API'
+    _description = 'WhatsApp API Configuration'
 
     name = fields.Char(string='Name', required=True)
     is_active = fields.Boolean(string='Active', default=True)
     phone_number_id = fields.Char(string='Phone Number ID', required=True)
     access_token = fields.Char(string='Access Token', required=True)
     base_url = fields.Char(string='Base URL', default='https://graph.facebook.com/v20.0/', required=True)
-
 
     @api.model
     def create(self, vals):
@@ -25,7 +25,6 @@ class WhatsAppAPI(models.Model):
         if vals.get('is_active'):
             self.search([('id', '!=', self.id)]).write({'is_active': False})
         return super(WhatsAppAPI, self).write(vals)
-
 
     def send_message(self, to, message_type, content, **kwargs):
         endpoint = f"{self.base_url}{self.phone_number_id}/messages"
@@ -44,13 +43,9 @@ class WhatsAppAPI(models.Model):
         elif message_type == "image":
             data["image"] = {"link": content}
         elif message_type == "document":
-            data["document"] = {"link": content, "filename": kwargs.get("filename")}
+            data["document"] = {"link": content, "caption": kwargs.get("caption")}
         elif message_type == "interactive":
-            data["interactive"] = {
-                "type": "button",
-                "body": {"text": content},
-                "action": {"buttons": kwargs.get("buttons", [])}
-            }
+            data["interactive"] = content
 
         try:
             response = requests.post(endpoint, headers=headers, json=data)
@@ -65,7 +60,7 @@ class WhatsAppAPI(models.Model):
         active_config = self.search([('is_active', '=', True)], limit=1)
         if not active_config:
             return {'status': 'error', 'message': 'No active WhatsApp API configuration'}
-        
+
         return active_config._process_webhook(webhook_data)
 
     def _process_webhook(self, webhook_data):
@@ -81,14 +76,14 @@ class WhatsAppAPI(models.Model):
     def _process_incoming_message(self, message):
         message_type = message.get('type')
         from_number = message.get('from')
-        
+
         if message_type == 'text':
             text = message.get('text', {}).get('body')
             self.env['whatsapp.message'].create({
                 'recipient_number': from_number,
                 'message_type': 'text',
                 'message_content': text,
-                'state': 'sent',
+                'state': 'received',
             })
         elif message_type == 'interactive':
             interactive_type = message.get('interactive', {}).get('type')
@@ -100,7 +95,7 @@ class WhatsAppAPI(models.Model):
                     'recipient_number': from_number,
                     'message_type': 'interactive',
                     'message_content': f"Button: {button_text} (ID: {button_id})",
-                    'state': 'sent',
+                    'state': 'received',
                 })
 
         self.mark_message_as_read(message.get('id'))

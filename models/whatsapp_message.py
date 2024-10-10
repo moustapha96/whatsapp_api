@@ -1,4 +1,7 @@
 from odoo import models, fields, api
+import json
+import logging
+_logger = logging.getLogger(__name__)
 
 class WhatsAppMessage(models.Model):
     _name = 'whatsapp.message'
@@ -19,6 +22,7 @@ class WhatsAppMessage(models.Model):
     state = fields.Selection([
         ('draft', 'Draft'),
         ('sent', 'Sent'),
+        ('received', 'Received'),
         ('error', 'Error')
     ], string='State', default='draft')
     error_message = fields.Text(string='Error Message')
@@ -30,16 +34,20 @@ class WhatsAppMessage(models.Model):
 
     def action_send_message(self):
         self.ensure_one()
-        whatsapp_api = self.env['whatsapp.api'].search([], limit=1)
+        whatsapp_api = self.env['whatsapp.api'].search([('is_active', '=', True)], limit=1)
         if not whatsapp_api:
             self.write({'state': 'error', 'error_message': 'WhatsApp API not configured'})
             return
 
         try:
+            content = self.message_content
+            if self.message_type == 'interactive':
+                content = json.loads(self.message_content)
+
             result = whatsapp_api.send_message(
                 self.recipient_number,
                 self.message_type,
-                self.message_content,
+                content,
                 attachment=self.attachment,
                 attachment_name=self.attachment_name
             )

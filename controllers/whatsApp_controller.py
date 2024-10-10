@@ -12,25 +12,30 @@ class WhatsAppController(http.Controller):
     def test_whatsapp_controller(self, **post):
         return {'status': 'success', 'message': 'WhatsApp controller is working'}
 
-
-    @http.route('/whatsapp/webhook', type='json', auth='none', methods=['POST'], csrf=False)
+    @http.route('/whatsapp/webhook', type='json', auth='public', methods=['POST'], csrf=False)
     def whatsapp_webhook(self, **post):
+        data = json.loads(request.httprequest.data)
+        return request.env['whatsapp.api'].sudo().process_webhook(data)
+    
+    
+    # @http.route('/whatsapp/webhook', type='json', auth='none', methods=['POST'], csrf=False)
+    # def whatsapp_webhook(self, **post):
 
-        user = request.env['res.users'].sudo().browse(request.env.uid)
-        if not user or user._is_public():
-            admin_user = request.env.ref('base.user_admin')
-            request.env = request.env(user=admin_user.id)
+    #     user = request.env['res.users'].sudo().browse(request.env.uid)
+    #     if not user or user._is_public():
+    #         admin_user = request.env.ref('base.user_admin')
+    #         request.env = request.env(user=admin_user.id)
 
-        try:
-            data = json.loads(request.httprequest.data)
-            whatsapp_api = request.env['whatsapp.api'].sudo().search([('is_active', '=', True)], limit=1)
-            _logger.exception(f"arrive ", )
-            if whatsapp_api:
-                return whatsapp_api.process_webhook(data)
-            return {'status': 'error', 'message': 'WhatsApp API not configured'}
-        except Exception as e:
-            _logger.exception("Error processing webhook: %s", str(e))
-            return {'status': 'error', 'message': str(e)}
+    #     try:
+    #         data = json.loads(request.httprequest.data)
+    #         whatsapp_api = request.env['whatsapp.api'].sudo().search([('is_active', '=', True)], limit=1)
+    #         _logger.exception(f"arrive ", )
+    #         if whatsapp_api:
+    #             return whatsapp_api.process_webhook(data)
+    #         return {'status': 'error', 'message': 'WhatsApp API not configured'}
+    #     except Exception as e:
+    #         _logger.exception("Error processing webhook: %s", str(e))
+    #         return {'status': 'error', 'message': str(e)}
         
 
     @http.route('/whatsapp/send_message', type='json', auth='none', methods=['POST'], csrf=False)
