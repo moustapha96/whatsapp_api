@@ -51,6 +51,8 @@
                                 attrs="{'invisible': [('message_type', 'not in', ['image', 'document'])]}" />
                             <field name="attachment_name"
                                 attrs="{'invisible': [('message_type', '!=', 'document')]}" />
+                            <field name="state" />
+                            <field name="display_error" readonly="1" />
                         </group>
                     </sheet>
                 </form>

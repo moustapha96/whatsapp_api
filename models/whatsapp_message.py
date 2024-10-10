@@ -26,11 +26,17 @@ class WhatsAppMessage(models.Model):
         ('error', 'Error')
     ], string='State', default='draft')
     error_message = fields.Text(string='Error Message')
+    display_error = fields.Text(string='Display Error', compute='_compute_display_error')
 
     @api.depends('recipient_number', 'create_date')
     def _compute_name(self):
         for record in self:
             record.name = f"{record.recipient_number} - {record.create_date.strftime('%Y-%m-%d %H:%M:%S')}"
+    
+    @api.depends('error_message')
+    def _compute_display_error(self):
+        for record in self:
+            record.display_error = record.error_message if record.error_message else ''
 
     def action_send_message(self):
         self.ensure_one()

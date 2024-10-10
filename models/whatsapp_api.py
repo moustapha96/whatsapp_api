@@ -47,6 +47,9 @@ class WhatsAppAPI(models.Model):
         elif message_type == "interactive":
             data["interactive"] = content
 
+        _logger.info(f"Sending message to {to} with data: {json.dumps(data)}")
+        _logger.info(f"Using access token: {self.access_token}")
+
         try:
             response = requests.post(endpoint, headers=headers, json=data)
             response.raise_for_status()
