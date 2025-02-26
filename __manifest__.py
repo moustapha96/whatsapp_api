@@ -1,5 +1,5 @@
 {
-    'name': 'WhatsApp Integration',
+    'name': 'WhatsApp Integration fonctionnel',
     'version': '1.0',
     'category': 'Marketing',
     'summary': 'Integrate WhatsApp functionality in Odoo',
@@ -17,7 +17,6 @@
         'python': ['simplejson'],
     },
     'data': [
-       
         'security/ir.model.access.csv',
         'views/whatsapp_menu.xml',
         'views/whatsapp_documentation_views.xml',
